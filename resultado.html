@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#1ec959" />
+<title>🚨 ALERTA — Seu Relacionamento Pode Estar em Perigo!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --green:#1ec959;
+    --green-2:#16a34a;
+    --green-3:#0e7a37;
+    --green-soft:#d1fae5;
+    --green-bg:#ecfdf5;
+    --green-dark:#065f46;
+    --text:#0f172a;
+    --muted:#64748b;
+    --bg:#f4f6fa;
+    --card:#ffffff;
+    --border:#e6ebf2;
+    --red:#ef4444;
+    --red-dark:#b91c1c;
+    --red-bg:#fee2e2;
+    --red-bar:#dc2626;
+    --dark:#0f172a;
+    --darker:#020617;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  body{min-height:100vh;}
+
+  /* ==== Top urgency bars ==== */
+  .urgency-bar{
+    background:var(--darker);
+    color:#fff;text-align:center;
+    padding:10px 14px;
+    font-weight:800;font-size:13px;letter-spacing:.4px;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    flex-wrap:wrap;
+  }
+  .urgency-bar .icon{color:var(--red);font-size:14px;}
+  .urgency-bar .small{font-weight:600;color:#cbd5e1;font-size:11.5px;}
+  .urgency-bar .timer{display:inline-flex;gap:5px;align-items:center;}
+  .timer-cell{
+    background:#fff;color:var(--darker);
+    font-weight:900;font-size:14px;
+    padding:3px 7px;border-radius:4px;
+    font-variant-numeric:tabular-nums;
+    min-width:28px;text-align:center;
+    letter-spacing:.5px;
+  }
+  .timer-sep{color:var(--red);font-weight:900;font-size:14px;}
+
+  /* ==== Header / Logo ==== */
+  header{
+    display:flex;justify-content:center;align-items:center;
+    padding:20px 14px 4px;
+  }
+  header img{height:72px;width:auto;}
+
+  /* ==== Red big alert ==== */
+  .alert{
+    max-width:520px;margin:10px auto 14px;background:var(--red-bg);
+    border:1px solid #fecaca;border-radius:14px;padding:14px 18px;text-align:center;
+  }
+  .alert h2{margin:0 0 6px;color:var(--red-dark);font-size:17px;font-weight:900;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:8px;line-height:1.35;}
+  .alert p{margin:0;color:#7f1d1d;font-size:13px;line-height:1.5;}
+  .alert p b{font-weight:800;}
+
+  /* ==== Contact with new avatar SVG ==== */
+  .contact{
+    max-width:520px;margin:0 auto 14px;background:var(--card);
+    border:1px solid var(--border);border-radius:14px;padding:14px;
+    display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;
+    box-shadow:0 4px 18px -8px rgba(15,23,42,.08);
+  }
+  .profile-avatar{
+    width:46px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg,#128C7E,#075E54);
+    color:#fff;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .profile-avatar svg{width:24px;height:24px;}
+  .contact .who{font-weight:800;font-size:15px;}
+  .contact .status{font-size:12.5px;color:var(--muted);margin-top:2px;display:flex;flex-direction:column;gap:1px;}
+
+  /* ==== Info note ==== */
+  .info-note{
+    max-width:520px;margin:0 auto 18px;text-align:center;color:var(--muted);
+    font-size:13px;line-height:1.55;padding:0 16px;
+  }
+  .info-note b{color:var(--text);font-weight:800;}
+
+  /* ==== Dark section cards ==== */
+  .section{
+    max-width:520px;margin:0 auto 14px;
+    background:#0f172a;color:#e2e8f0;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 6px 22px -10px rgba(15,23,42,.5);
+  }
+  .section .pill{
+    display:inline-flex;align-items:center;gap:6px;
+    color:#fcd34d;background:rgba(251,191,36,.12);
+    font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+    padding:5px 10px;border-radius:99px;margin:14px 14px 0;
+    border:1px solid rgba(251,191,36,.25);
+  }
+  .section .pill.red{background:rgba(239,68,68,.15);color:#fca5a5;border-color:rgba(239,68,68,.25);}
+  .section .pill.green{background:rgba(34,197,94,.15);color:#86efac;border-color:rgba(34,197,94,.25);}
+  .section h3{margin:10px 16px 4px;font-size:14.5px;font-weight:800;color:#fff;line-height:1.45;}
+  .section h3 .acc{color:#fcd34d;}
+  .section h3 .acc-g{color:#86efac;}
+  .section .sub{margin:0 16px 10px;font-size:12.5px;color:#94a3b8;line-height:1.5;}
+  .section .sub b{color:#fff;font-weight:700;}
+
+  /* List of items with emoji icons (Resultados da análise) */
+  .section ul{list-style:none;margin:0;padding:6px 14px 14px;}
+  .section ul li{
+    display:grid;grid-template-columns:auto 1fr;gap:10px;
+    padding:9px 6px;border-radius:8px;font-size:13px;line-height:1.5;color:#cbd5e1;
+    transition:background .15s;
+  }
+  .section ul li:hover{background:rgba(255,255,255,.04);}
+  .section ul li .ic{
+    width:20px;height:20px;border-radius:6px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;
+  }
+
+  /* WhatsApp dark mockup (blurred) */
+  .wp-mock{
+    margin:8px 12px 14px;
+    background:#111b21;color:#e9edef;
+    border-radius:14px;overflow:hidden;
+    border:1px solid #0b141a;
+    box-shadow:0 10px 30px -10px rgba(0,0,0,.5);
+    position:relative;
+    filter:blur(2.6px);
+  }
+  .wp-mock::after{
+    content:'';position:absolute;inset:0;
+    background:rgba(11,20,26,.18);
+    pointer-events:none;
+  }
+  .wp-mock .top{
+    background:#202c33;padding:9px 12px;
+    display:flex;align-items:center;gap:10px;
+    position:relative;z-index:1;
+  }
+  .wp-mock .top .av{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,#128C7E,#075E54);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+  }
+  .wp-mock .top .av svg{width:18px;height:18px;}
+  .wp-mock .top .meta{display:flex;flex-direction:column;line-height:1.2;}
+  .wp-mock .top .meta b{font-size:13px;color:#e9edef;}
+  .wp-mock .top .meta small{font-size:11px;color:#8696a0;}
+  .wp-mock .msgs{padding:12px 12px;display:flex;flex-direction:column;gap:6px;background:#0b141a;position:relative;z-index:1;}
+  .wp-mock .msg{max-width:80%;padding:6px 9px;border-radius:8px;font-size:12px;line-height:1.4;background:#202c33;}
+  .wp-mock .msg.me{align-self:flex-end;background:#005c4b;}
+  .wp-mock .msg small{display:block;font-size:10px;color:#9ca3af;margin-top:3px;text-align:right;}
+
+  /* Lock overlay */
+  .lock-overlay{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    z-index:5;pointer-events:none;
+  }
+  .lock-overlay .ic{
+    color:#fff;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));
+    margin-bottom:6px;
+  }
+  .lock-overlay .lbl{
+    background:rgba(15,23,42,.7);color:#fff;
+    font-size:12.5px;font-weight:600;
+    padding:4px 12px;border-radius:99px;
+    backdrop-filter:blur(2px);
+  }
+
+  /* Big green CTA between sections */
+  .explore-cta{
+    max-width:520px;margin:6px auto 14px;display:block;width:100%;
+    background:linear-gradient(180deg,#0e7a37,#16a34a);
+    color:#fff;border:none;border-radius:12px;padding:14px 18px;
+    font-weight:800;font-size:14px;letter-spacing:.2px;cursor:pointer;
+    text-align:center;
+    box-shadow:0 8px 20px -6px rgba(22,163,74,.55);
+    font-family:inherit;line-height:1.35;
+  }
+  .explore-cta b{display:block;font-size:12px;font-weight:700;color:#bbf7d0;margin-top:2px;}
+
+  /* Contact list (blurred rows) */
+  .contact-list{
+    margin:0 12px 14px;
+    background:#111b21;color:#cbd5e1;
+    border-radius:14px;overflow:hidden;
+    border:1px solid #0b141a;
+    box-shadow:0 6px 20px -10px rgba(0,0,0,.5);
+    position:relative;filter:blur(3px);
+  }
+  .contact-list::after{content:'';position:absolute;inset:0;background:rgba(11,20,26,.2);pointer-events:none;}
+  .contact-list > *{position:relative;z-index:1;}
+  .contact-list .row{
+    padding:14px 16px;
+    display:flex;align-items:center;gap:12px;
+    border-top:1px solid #1e293b;
+  }
+  .contact-list .row:first-child{border-top:none;}
+  .contact-list .row .ic{
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(255,255,255,.05);color:#fcd34d;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .contact-list .row .ic svg{width:18px;height:18px;}
+  .contact-list .row .txt b{display:block;color:#fff;font-size:13.5px;font-weight:700;}
+  .contact-list .row .txt small{color:#94a3b8;font-size:11.5px;}
+
+  /* ==== Photos section (less blur) ==== */
+  .photos-grid{
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;
+    padding:8px 12px 14px;
+  }
+  .photo-card{
+    aspect-ratio:1/1;border-radius:8px;overflow:hidden;position:relative;
+    background:#1a1a1a;cursor:pointer;
+  }
+  .photo-card .lock{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.92);
+    background:rgba(0,0,0,.18);
+    backdrop-filter:blur(1px);
+    transition:opacity .3s;z-index:2;
+  }
+  .photo-card img{
+    width:100%;height:100%;object-fit:cover;display:block;
+    filter:blur(2px);
+    transition:filter .3s;
+  }
+
+  /* ==== Map with realistic style ==== */
+  .map-section{
+    max-width:520px;margin:0 auto 14px;background:#0f172a;color:#cbd5e1;
+    border-radius:14px;overflow:hidden;
+    box-shadow:0 6px 22px -10px rgba(15,23,42,.5);
+  }
+  .map-section .pill{
+    display:inline-flex;align-items:center;gap:6px;color:#86efac;
+    background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.25);
+    font-size:10.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+    padding:5px 10px;border-radius:99px;margin:14px 14px 0;
+  }
+  .map-section h3{margin:10px 16px 4px;font-size:14.5px;font-weight:800;color:#fff;line-height:1.45;}
+  .map-section h3 .acc-g{color:#86efac;}
+  .map-section .sub{margin:0 16px 12px;font-size:12.5px;color:#94a3b8;line-height:1.5;}
+  .map-section .sub b{color:#fff;font-weight:700;}
+
+  .map-canvas{
+    margin:0 14px 14px;
+    height:220px;border-radius:10px;overflow:hidden;position:relative;
+    background:#e8eef0;
+    background-size:cover;
+    background-position:center;
+    background-image:
+      linear-gradient(90deg, transparent 14%, #fde68a 14% 18%, transparent 18%, transparent 62%, #fde68a 62% 67%, transparent 67%),
+      linear-gradient(180deg, transparent 38%, #fde68a 38% 42%, transparent 42%, transparent 82%, #fde68a 82% 87%, transparent 87%),
+      linear-gradient(0deg, transparent 9%, #ffffff 9% 11%, transparent 11%, transparent 25%, #ffffff 25% 27%, transparent 27%, transparent 53%, #ffffff 53% 55%, transparent 55%, transparent 73%, #ffffff 73% 75%, transparent 75%),
+      linear-gradient(90deg, transparent 5%, #ffffff 5% 7%, transparent 7%, transparent 28%, #ffffff 28% 30%, transparent 30%, transparent 50%, #ffffff 50% 52%, transparent 52%, transparent 86%, #ffffff 86% 88%, transparent 88%),
+      radial-gradient(circle at 78% 22%, rgba(132,204,22,.6) 0%, rgba(132,204,22,.45) 14%, transparent 24%),
+      radial-gradient(ellipse at 8% 92%, rgba(56,189,248,.6) 0%, rgba(56,189,248,.4) 22%, transparent 36%),
+      linear-gradient(180deg, #e8eef0, #dde7eb);
+  }
+  .map-canvas .tile-grid{
+    position:absolute;inset:-20px;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    grid-template-rows:repeat(2, 1fr);
+    gap:0;
+    filter:blur(2.8px);
+    z-index:0;
+  }
+  .map-canvas .tile-grid img{
+    width:100%;height:100%;display:block;object-fit:cover;
+  }
+  .map-canvas .pin{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);
+    width:42px;color:#ef4444;z-index:4;
+    filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));
+  }
+  .map-canvas .pin-label{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,12px);
+    background:rgba(15,23,42,.92);color:#fff;font-size:12px;font-weight:600;
+    padding:5px 10px;border-radius:6px;white-space:nowrap;z-index:4;
+  }
+  .map-overlay{
+    position:absolute;inset:14px 14px 14px 14px;border-radius:10px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(15,23,42,.35);z-index:3;
+    backdrop-filter:blur(1px);
+    -webkit-backdrop-filter:blur(1px);
+  }
+  .map-overlay .ic{color:#fff;margin-bottom:6px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));}
+  .map-overlay .lbl{color:#fff;font-size:12.5px;font-weight:600;background:rgba(15,23,42,.7);padding:4px 12px;border-radius:99px;}
+  .map-overlay .place{
+    color:#fff;font-size:11px;margin-top:6px;
+    background:rgba(15,23,42,.55);padding:3px 10px;border-radius:99px;
+    max-width:90%;text-align:center;
+  }
+
+  /* ==== Audio section ==== */
+  .audio-list{
+    margin:0 12px 14px;
+    background:#111b21;color:#cbd5e1;
+    border-radius:14px;overflow:hidden;
+    border:1px solid #0b141a;
+    box-shadow:0 6px 20px -10px rgba(0,0,0,.5);
+    position:relative;filter:blur(3px);
+  }
+  .audio-list::after{content:'';position:absolute;inset:0;background:rgba(11,20,26,.2);pointer-events:none;}
+  .audio-list > *{position:relative;z-index:1;}
+  .audio-list .a-row{
+    padding:14px 16px;display:flex;align-items:center;gap:10px;
+    border-top:1px solid #1e293b;
+  }
+  .audio-list .a-row:first-child{border-top:none;}
+  .audio-list .play{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--green);color:#fff;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .audio-list .play svg{width:14px;height:14px;margin-left:2px;}
+  .audio-list .bars{
+    flex:1;height:28px;
+    background:
+      radial-gradient(circle at 4px 50%, rgba(134,239,172,.7) 1.5px, transparent 2px) 0 0/9px 28px,
+      linear-gradient(180deg,#0b141a,#111b21);
+    border-radius:6px;border:1px solid #1e293b;
+  }
+
+  /* ==== Price card ==== */
+  .price{
+    max-width:520px;margin:0 auto 16px;text-align:center;padding:0 14px;
+  }
+  .price .logo-wrap{margin:0 auto 6px;}
+  .price .logo-wrap img{height:60px;width:auto;}
+  .price p{margin:6px 0 10px;color:var(--muted);font-size:13px;line-height:1.55;}
+  .price p b{color:var(--text);font-weight:800;}
+  .price .price-row{margin:0 auto 12px;background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:12px 18px;display:inline-flex;flex-direction:column;align-items:center;}
+  .price .price-row .from{font-size:12px;color:var(--muted);text-decoration:line-through;}
+  .price .price-row .vv{font-size:30px;font-weight:900;color:var(--green-3);line-height:1.1;}
+  .price .price-row .vv .cent{font-size:18px;vertical-align:top;margin-left:1px;}
+  .cta-buy{
+    width:100%;max-width:520px;
+    background:linear-gradient(180deg,#16a34a,#0e7a37);
+    color:#fff;border:none;border-radius:12px;padding:16px;
+    font-weight:900;font-size:15px;letter-spacing:.4px;cursor:pointer;
+    text-transform:uppercase;
+    box-shadow:0 10px 24px -8px rgba(22,163,74,.55);
+    margin:0 auto;display:block;font-family:inherit;
+  }
+  .badges{
+    display:flex;justify-content:center;gap:8px;flex-wrap:wrap;
+    margin-top:12px;
+  }
+  .badges span{
+    background:var(--green-bg);color:var(--green-dark);
+    font-size:11.5px;font-weight:700;
+    padding:6px 12px;border-radius:99px;
+    border:1px solid var(--green-soft);
+  }
+
+  /* ==== Testimonials ==== */
+  .t-title{
+    text-align:center;margin:22px auto 6px;font-size:22px;font-weight:800;
+  }
+  .t-title .g{color:var(--green-3);}
+  .t-sub{text-align:center;color:var(--muted);font-size:13px;margin:0 auto 14px;max-width:520px;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .t-sub .star{color:#fbbf24;}
+
+  .testi{
+    max-width:520px;margin:0 auto 18px;background:var(--card);
+    border:1px solid var(--border);border-radius:14px;padding:14px;
+    box-shadow:0 4px 18px -8px rgba(15,23,42,.08);
+  }
+  .testi .who{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .testi .who .av{width:36px;height:36px;border-radius:50%;background:#e2e8f0;color:#334155;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;}
+  .testi .who .meta b{display:block;font-size:14px;font-weight:800;}
+  .testi .who .meta small{color:var(--muted);font-size:11px;display:inline-flex;align-items:center;gap:6px;}
+  .testi .who .meta small .stars{color:#fbbf24;letter-spacing:1px;}
+  .testi .who .meta small .badge{
+    background:#d1fae5;color:#065f46;font-size:10px;font-weight:800;letter-spacing:.4px;
+    padding:2px 8px;border-radius:99px;
+  }
+  .testi .video-box{
+    position:relative;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:16/9;
+  }
+  .testi .video-box video{
+    position:absolute;inset:0;width:100%;height:100%;display:block;
+    object-fit:cover;background:#000;
+  }
+  .testi .video-box .play-overlay{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.18);cursor:pointer;transition:opacity .25s;
+  }
+  .testi .video-box.is-playing .play-overlay{opacity:0;pointer-events:none;}
+  .testi .video-box .play-overlay .pp{
+    width:54px;height:54px;border-radius:50%;
+    background:#ef4444;color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 20px -4px rgba(239,68,68,.5);
+  }
+  .testi .video-box .play-overlay .pp svg{width:22px;height:22px;margin-left:2px;}
+
+  /* Final CTA */
+  .final{
+    max-width:520px;margin:14px auto 40px;text-align:center;padding:0 14px;
+  }
+  .final h3{font-size:22px;font-weight:800;margin:0 0 6px;}
+  .final h3 .g{color:var(--green-3);}
+  .final p{color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 14px;}
+
+  /* Lightbox */
+  .lightbox{
+    position:fixed;inset:0;background:rgba(0,0,0,.92);
+    display:none;align-items:center;justify-content:center;z-index:99;padding:20px;
+  }
+  .lightbox.is-on{display:flex;}
+  .lightbox img{max-width:100%;max-height:90vh;border-radius:10px;filter:none !important;}
+  .lightbox .close{position:absolute;top:18px;right:18px;color:#fff;font-size:30px;background:transparent;border:none;}
+
+  .container{max-width:540px;margin:0 auto;padding:0 14px;}
+
+  @media (max-width:420px){
+    .alert h2{font-size:15px;}
+    .section h3, .map-section h3{font-size:13.5px;}
+    .price .price-row .vv{font-size:26px;}
+    .urgency-bar{font-size:12px;}
+    header img{height:60px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Top urgency bars -->
+<div class="urgency-bar">
+  <span class="icon">⚠️</span>
+  <span>ALERTA DE EMERGÊNCIA</span>
+</div>
+<div class="urgency-bar" style="background:#1e293b;padding-top:0;">
+  <small class="small">Telefone e pagamento não serão salvos por questão de <b style="color:#fff;">segurança!</b></small>
+</div>
+<div class="urgency-bar" style="background:var(--red-bar);padding:8px 14px;gap:14px;">
+  <small style="font-weight:700;color:#fff;font-size:12px;letter-spacing:.4px;">FALTAM</small>
+  <span class="timer">
+    <span class="timer-cell" id="hm">09</span>
+    <span class="timer-sep">:</span>
+    <span class="timer-cell" id="mm">38</span>
+    <span class="timer-sep">:</span>
+    <span class="timer-cell" id="ss">17</span>
+  </span>
+  <small style="font-weight:700;color:#fff;font-size:12px;letter-spacing:.4px;">MINUTOS</small>
+</div>
+
+<header>
+  <img src="assets/logo.webp" alt="ZapRadar" />
+</header>
+
+<!-- Red big alert -->
+<div class="alert">
+  <h2>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="#b91c1c"><path d="M12 2 1 21h22L12 2zm0 6 7 12H5l7-12zm-1 4v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+    O SEU RELACIONAMENTO PODE ESTAR EM PERIGO!
+  </h2>
+  <p>Veja abaixo algumas das <b>12 mensagens suspeitas</b> e fotos apagadas que achamos no WhatsApp de <b id="alertPhone">—</b></p>
+</div>
+
+<!-- Contact with new avatar SVG -->
+<div class="contact">
+  <div id="avatar-fallback" class="profile-avatar">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5">
+      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+  </div>
+  <div>
+    <div class="who" id="contactPhone">+55 —</div>
+    <div class="status">
+      <span>• Última vez online: <b style="color:#0f172a;">ontem às 23:42</b></span>
+      <span>• Status personalizado: <b style="color:#0f172a;">"Disponível"</b></span>
+      <span>• <b style="color:#0f172a;">2</b> dispositivos conectados</span>
+    </div>
+  </div>
+</div>
+
+<div class="info-note">
+  <b id="phoneBold">—</b><br/>
+  Nosso sistema detectou que este número contém e <b>ZapRadar</b>
+  foi encontrado com uma <b>escala alarmante</b> de <b style="color:var(--green-3);">99%</b>.<br/>
+  <span style="color:var(--green-3);font-weight:700;">Fontes de relatório: 99%</span><br/>
+  <small style="color:#94a3b8;font-size:11.5px;font-weight:600;letter-spacing:.4px;">RELATÓRIO GERADO EM <span id="reportDate">15/10/2026 19:09</span></small>
+</div>
+
+<!-- Section 1: Resultados da análise (list of findings) -->
+<section class="section">
+  <span class="pill">⚠️ MENSAGENS RECUPERADAS</span>
+  <h3>Resultados da <span class="acc">análise</span></h3>
+  <ul>
+    <li><span class="ic">📷</span><span><b>Encontramos</b> 12 mensagens suspeitas no WhatsApp</span></li>
+    <li><span class="ic">📷</span><span><b>12</b> mensagens contendo a palavra <b style="color:#fff;">"gostosa"</b></span></li>
+    <li><span class="ic">❤️</span><span><b>43</b> mensagens contendo a palavra <b style="color:#fff;">"amor"</b></span></li>
+    <li><span class="ic">🔥</span><span><b>28</b> fotos & vídeos foram encontrados por uma certa na telefone</span></li>
+    <li><span class="ic">🚫</span><span><b>6</b> mensagens contendo a palavra <b style="color:#fff;">"regredir"</b></span></li>
+    <li><span class="ic">😈</span><span>Há um <b>contato na Nighttalk</b> que envia frequentemente para mensagens e do que estão <b>sexuais</b></span></li>
+    <li><span class="ic">⏰</span><span><b>3</b> imagens enviadas e <b>visualizadas antes</b> foram identificadas e excluídas</span></li>
+    <li><span class="ic">😮</span><span><b>2</b> novas suspeitas foram detectadas nos próximos 30 minutos</span></li>
+    <li><span class="ic">🔞</span><span><b>2</b> conversas arquivadas foram marcadas como <b>especiais</b></span></li>
+  </ul>
+</section>
+
+<!-- Green CTA between sections -->
+<button class="explore-cta" data-link="#">
+  Exploragemos 100% conteúdos
+  <b id="explorePhone">do WhatsApp de +55 81 98123-3109</b>
+</button>
+
+<!-- Section 2: WhatsApp mock (blurred) -->
+<section class="section">
+  <span class="pill red">⚠️ MENSAGENS RECUPERADAS</span>
+  <h3>Recuperamos o histórico de WhatsApp de <span class="acc">+55 <span id="wpPhone1">—</span></span></h3>
+  <p class="sub">Com base nas suas buscas por elas <b>mais unlocks</b> conseguimos comparar: <b>21 21 <span id="wpPhoneShort">—</span></b> são um ex-número.</p>
+
+  <div style="position:relative;margin:0 12px 14px;">
+    <div class="wp-mock">
+      <div class="top">
+        <div class="av">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="meta">
+          <b>+55 <span id="wpName1">—</span></b>
+          <small>visto por último hoje às 22:04</small>
+        </div>
+      </div>
+      <div class="msgs">
+        <div class="msg">Hoje à noite, ele é o meu. Não vou fazer nada, te amo demais 💔<small>21:42</small></div>
+        <div class="msg me">Mas e o que ele faz quando não está comigo? 😢<small>21:43</small></div>
+        <div class="msg">Tô passando uns dias fora, mas quando voltar a gente se vê sim 😉<small>21:44</small></div>
+        <div class="msg me">Você é especial demais pra mim ❤️<small>21:45</small></div>
+        <div class="msg">❤️❤️<small>21:46</small></div>
+        <div class="msg me">Te encontro amanhã às 22h no mesmo lugar 🔥<small>22:15</small></div>
+      </div>
+    </div>
+    <div class="lock-overlay">
+      <div class="ic">
+        <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+      </div>
+      <div class="lbl">Conversa bloqueada</div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 3: Contatos ocultos (blurred list) -->
+<section class="section">
+  <span class="pill red">⚠️ CONTATOS OCULTOS DETECTADOS</span>
+  <h3>Interceptamos <span class="acc">contatos ocultos</span> de <b id="wpPhone2">—</b></h3>
+  <p class="sub">Detectamos que <b>+55 <span id="wpPhone2b">—</span></b> possui <b>7 contatos salvos</b> como bloqueados. Alguns contatos estavam <b>inúteis e comprometidos</b>.</p>
+
+  <div style="position:relative;">
+    <div class="contact-list">
+      <div class="row">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="txt"><b>+55 21 9****-****</b><small>Conversas recentes · Áudios enviados</small></div>
+      </div>
+      <div class="row">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="txt"><b>+55 11 9****-****</b><small>6 mensagens apagadas</small></div>
+      </div>
+      <div class="row">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="txt"><b>+55 31 9****-****</b><small>Última conversa há 2 horas</small></div>
+      </div>
+    </div>
+    <div class="lock-overlay">
+      <div class="ic">
+        <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+      </div>
+      <div class="lbl">Contatos bloqueados</div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 4: Fotos privadas -->
+<section class="section">
+  <span class="pill">📷 FOTOS PRIVADAS INTERCEPTADAS</span>
+  <h3>Encontramos <span class="acc-g">fotos enviadas em privado</span> por +55 <span id="wpPhone3">—</span></h3>
+  <p class="sub">Imagens enviadas em conversas privadas que <b>desaparecem após serem abertas</b>. Já as guardamos para você.</p>
+
+  <div class="photos-grid">
+    <div class="photo-card"><img src="assets/Foto-1.webp" alt=""/><div class="lock">
+      <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+    </div></div>
+    <div class="photo-card"><img src="assets/Foto-2.webp" alt=""/><div class="lock">
+      <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+    </div></div>
+    <div class="photo-card"><img src="assets/Foto-3.webp" alt=""/><div class="lock">
+      <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+    </div></div>
+    <div class="photo-card"><img src="assets/Foto-4.webp" alt=""/><div class="lock">
+      <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+    </div></div>
+    <div class="photo-card"><img src="assets/Foto-5.webp" alt=""/><div class="lock">
+      <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+    </div></div>
+    <div class="photo-card"><img src="assets/Foto-6.webp" alt=""/><div class="lock">
+      <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+    </div></div>
+  </div>
+</section>
+
+<!-- Price card -->
+<div class="price">
+  <div class="logo-wrap"><img src="assets/logo.webp" alt="ZapRadar"/></div>
+  <p>Com o <b>ZapRadar</b> você tem acesso completo ao WhatsApp do seu parceiro por apenas:</p>
+  <div class="price-row">
+    <span class="from">De R$397,00</span>
+    <div class="vv">R$137<span class="cent">,00</span></div>
+  </div>
+  <button class="cta-buy" data-link="#">Desbloquear acesso agora</button>
+  <div class="badges">
+    <span>🔒 Garantia 30 dias</span>
+    <span>🔓 Acesso por 1 ano</span>
+    <span>📱 Até 3 números</span>
+  </div>
+</div>
+
+<!-- Section 5: Última conexão detectada (map) -->
+<section class="map-section">
+  <span class="pill">🕐 ÚLTIMA CONEXÃO DETECTADA</span>
+  <h3>+55 <span id="wpPhone4">—</span> esteve <span class="acc-g">online em um horário diferente</span> do que disse</h3>
+  <p class="sub">Detectamos o horário exato da última conexão de <b>+55 <span id="wpPhone4b">—</span></b> mesmo que tenha o status <b>"visto por último"</b> oculto.</p>
+
+  <div style="position:relative;">
+    <div class="map-canvas" id="map1">
+      <div class="tile-grid" id="tileGrid1"></div>
+      <div class="pin">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+      </div>
+      <div class="pin-label">Última localização</div>
+    </div>
+    <div class="map-overlay">
+      <div class="ic">
+        <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+      </div>
+      <div class="lbl">Dados bloqueados</div>
+      <div class="place" id="map1Place">Detectando localização…</div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 6: Localização suspeita (map) -->
+<section class="map-section">
+  <span class="pill">📍 LOCALIZAÇÃO SUSPEITA DETECTADA</span>
+  <h3>+55 <span id="wpPhone5">—</span> <span class="acc-g">compartilhou sua localização em segredo</span> ontem à noite</h3>
+  <p class="sub">Detectamos que <b>+55 <span id="wpPhone5b">—</span></b> esteve em um lugar diferente do que te disse. O mapa exato está bloqueado até que você confirme seu acesso.</p>
+
+  <div style="position:relative;">
+    <div class="map-canvas" id="map2">
+      <div class="tile-grid" id="tileGrid2"></div>
+      <div class="pin">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+      </div>
+      <div class="pin-label">Localização bloqueada</div>
+    </div>
+    <div class="map-overlay">
+      <div class="ic">
+        <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+      </div>
+      <div class="lbl">Localização bloqueada</div>
+      <div class="place" id="map2Place">Detectando localização…</div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 7: Áudios suspeitos -->
+<section class="section">
+  <span class="pill red">🎙️ ÁUDIOS SUSPEITOS ENCONTRADOS</span>
+  <h3>Interceptamos <span class="acc">áudios enviados</span> por +55 <span id="wpPhone6">—</span></h3>
+  <p class="sub"><b style="color:#fff;">12 áudios</b> foram capturados e transcritos. Alguns contêm conteúdo <b style="color:#fff;">íntimo e comprometedor</b>.</p>
+
+  <div style="position:relative;">
+    <div class="audio-list">
+      <div class="a-row">
+        <div class="play"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="bars"></div>
+      </div>
+      <div class="a-row">
+        <div class="play"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div>
+        <div class="bars"></div>
+      </div>
+    </div>
+    <div class="lock-overlay">
+      <div class="ic">
+        <svg width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0110 0v4"></path></svg>
+      </div>
+      <div class="lbl">Áudios bloqueados</div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials title -->
+<h3 class="t-title">Veja quem já descobriu a <span class="g">verdade</span></h3>
+<p class="t-sub"><span class="star">⭐</span> Depoimentos reais de quem já usou o ZapRadar</p>
+
+<!-- Testimonial videos -->
+<div class="testi container">
+  <div class="who">
+    <div class="av">M</div>
+    <div class="meta"><b>Marcos S.</b><small><span class="stars">★★★★★</span><span class="badge">VERIFICADO</span></small></div>
+  </div>
+  <div class="video-box" data-vid="t1">
+    <video preload="metadata" poster="assets/testimonial-1.jpg" playsinline>
+      <source src="assets/testimonial-1.mp4" type="video/mp4" />
+    </video>
+    <div class="play-overlay"><div class="pp"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div></div>
+  </div>
+</div>
+
+<div class="testi container">
+  <div class="who">
+    <div class="av">D</div>
+    <div class="meta"><b>Daísa F.</b><small><span class="stars">★★★★★</span><span class="badge">VERIFICADO</span></small></div>
+  </div>
+  <div class="video-box" data-vid="t2">
+    <video preload="metadata" poster="assets/testimonial-2.jpg" playsinline>
+      <source src="assets/testimonial-2.mp4" type="video/mp4" />
+    </video>
+    <div class="play-overlay"><div class="pp"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div></div>
+  </div>
+</div>
+
+<div class="testi container">
+  <div class="who">
+    <div class="av">J</div>
+    <div class="meta"><b>Juliana A.</b><small><span class="stars">★★★★★</span><span class="badge">VERIFICADO</span></small></div>
+  </div>
+  <div class="video-box" data-vid="t3">
+    <video preload="metadata" poster="assets/testimonial-3.jpg" playsinline>
+      <source src="assets/testimonial-3.mp4" type="video/mp4" />
+    </video>
+    <div class="play-overlay"><div class="pp"><svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></div></div>
+  </div>
+</div>
+
+<!-- Final CTA -->
+<div class="final">
+  <h3>Quer descobrir a <span class="g">verdade completa?</span></h3>
+  <p>Desbloqueie agora o relatório completo, fotos, mensagens e histórico de localização em segundos.</p>
+  <button class="cta-buy" data-link="#">Quero saber a verdade agora</button>
+  <div class="badges" style="margin-top:14px;">
+    <span>🔒 100% anônimo</span>
+    <span>⚡ Sem cartão</span>
+    <span>🛡️ Acesso imediato</span>
+  </div>
+</div>
+
+<div class="lightbox" id="lb">
+  <button class="close" id="lbClose" aria-label="Fechar">&times;</button>
+  <img id="lbImg" src="" alt="" />
+</div>
+
+<script>
+(function(){
+  // ==== IP-based geolocation (no permission needed) ====
+  // Uses CSS map background; pin position + label vary by user's IP location.
+  const map1 = document.getElementById('map1');
+  const map2 = document.getElementById('map2');
+  const map1Pin = map1 && map1.querySelector('.pin');
+  const map2Pin = map2 && map2.querySelector('.pin');
+  const map1Place = document.getElementById('map1Place');
+  const map2Place = document.getElementById('map2Place');
+
+  const FALLBACK = { lat: -23.5505, lng: -46.6333, city: 'São Paulo', region: 'São Paulo', country: 'BR' };
+
+  function setPinPosition(pin, lat, lng){
+    if(!pin) return;
+    const lngOff = ((lng + 180) % 60) / 60 * 50 - 25;
+    const latOff = ((lat + 90) % 30) / 30 * 30 - 15;
+    pin.style.left = `calc(50% + ${lngOff}%)`;
+    pin.style.top = `calc(50% + ${latOff}%)`;
+  }
+  function setLabel(placeEl, text){
+    if(placeEl) placeEl.textContent = text;
+  }
+
+  function applyFallback(){
+    setPinPosition(map1Pin, FALLBACK.lat, FALLBACK.lng);
+    setPinPosition(map2Pin, FALLBACK.lat + 0.5, FALLBACK.lng + 1);
+    setLabel(map1Place, `${FALLBACK.city}, ${FALLBACK.region}, ${FALLBACK.country}`);
+    setLabel(map2Place, 'Localização bloqueada');
+  }
+
+  function applyLocation(data){
+    if(!data || data.status === 'fail'){ applyFallback(); return; }
+    const lat = data.lat, lng = data.lon;
+    setPinPosition(map1Pin, lat, lng);
+    setPinPosition(map2Pin, lat + 0.005, lng + 0.012);
+    const label = [data.city, data.regionName, data.country].filter(Boolean).join(', ');
+    setLabel(map1Place, label || `Lat ${lat.toFixed(3)}, Lng ${lng.toFixed(3)}`);
+    setLabel(map2Place, 'Localização bloqueada');
+  }
+
+  // IP geolocation API — no permission required
+  // http://ip-api.com/json/ — free, returns lat/lon/city/region/country
+  fetch('https://ipwho.is/', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if(data && data.success !== false && typeof data.latitude === 'number'){
+        setPinPosition(map1Pin, data.latitude, data.longitude);
+        setPinPosition(map2Pin, data.latitude + 0.005, data.longitude + 0.012);
+        const label = [data.city, data.region, data.country_code].filter(Boolean).join(', ');
+        setLabel(map1Place, label || `Lat ${data.latitude.toFixed(3)}, Lng ${data.longitude.toFixed(3)}`);
+        setLabel(map2Place, 'Localização bloqueada');
+      } else {
+        applyFallback();
+      }
+    })
+    .catch(()=> applyFallback());
+
+  const raw = (function(){ try{ return localStorage.getItem('wt_phone') || ''; }catch(_){ return ''; } })();
+  function digitsOnly(d){ return (d||'').replace(/\D/g,'').slice(0,11); }
+  function fFull(d){
+    const v = digitsOnly(d);
+    if(!v) return '+55 —';
+    if(v.length <= 2) return '+55 ' + v;
+    if(v.length <= 7) return `+55 ${v.slice(0,2)} ${v.slice(2)}`;
+    return `+55 ${v.slice(0,2)} ${v.slice(2,7)}-${v.slice(7,11)}`;
+  }
+  function fSoft(d){
+    const v = digitsOnly(d);
+    if(!v) return '—';
+    if(v.length <= 2) return v;
+    if(v.length <= 7) return `${v.slice(0,2)} ${v.slice(2)}`;
+    return `${v.slice(0,2)} ${v.slice(2,7)}-${v.slice(7,11)}`;
+  }
+  function fShort(d){
+    const v = digitsOnly(d);
+    if(!v) return '—';
+    return `${v.slice(0,2)} ${v.slice(2,7)}-${v.slice(7,11)}`;
+  }
+  const full  = fFull(raw);
+  const soft  = fSoft(raw);
+  const short = fShort(raw);
+
+  const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent = val; };
+  set('alertPhone', soft);
+  set('contactPhone', full);
+  set('phoneBold', soft);
+  set('wpPhone1', soft);
+  set('wpPhone2', soft);
+  set('wpPhone2b', soft);
+  set('wpPhone3', soft);
+  set('wpPhone4', soft);
+  set('wpPhone4b', soft);
+  set('wpPhone5', soft);
+  set('wpPhone5b', soft);
+  set('wpPhone6', soft);
+  set('wpName1', soft);
+  set('wpPhoneShort', soft);
+  set('explorePhone', 'do WhatsApp de ' + full);
+
+  // Update report date
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const dateStr = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  set('reportDate', dateStr);
+
+  // === Countdown timer ===
+  const hm = document.getElementById('hm');
+  const mm = document.getElementById('mm');
+  const ss = document.getElementById('ss');
+  let total = 9*3600 + 38*60 + 17;
+  function tick(){
+    if(total < 0) total = 0;
+    const h = Math.floor(total/3600);
+    const m = Math.floor((total%3600)/60);
+    const s = total%60;
+    if(hm) hm.textContent = String(h).padStart(2,'0');
+    if(mm) mm.textContent = String(m).padStart(2,'0');
+    if(ss) ss.textContent = String(s).padStart(2,'0');
+    total--;
+  }
+  tick(); setInterval(tick, 1000);
+
+  // === Photo lightbox ===
+  const lb = document.getElementById('lb');
+  const lbImg = document.getElementById('lbImg');
+  document.querySelectorAll('.photo-card').forEach((el)=>{
+    el.addEventListener('click', ()=>{
+      const img = el.querySelector('img');
+      if(!img) return;
+      lbImg.src = img.src;
+      lb.classList.add('is-on');
+    });
+  });
+  document.getElementById('lbClose').addEventListener('click', ()=> lb.classList.remove('is-on'));
+  lb.addEventListener('click', (e)=>{ if(e.target === lb) lb.classList.remove('is-on'); });
+
+  // === Testimonial videos ===
+  document.querySelectorAll('.video-box').forEach((box)=>{
+    const vid = box.querySelector('video');
+    const overlay = box.querySelector('.play-overlay');
+    overlay.addEventListener('click', ()=>{
+      box.classList.add('is-playing');
+      vid.controls = true;
+      vid.play().catch(()=>{});
+    });
+    vid.addEventListener('ended', ()=>{ box.classList.remove('is-playing'); vid.controls = false; });
+  });
+
+})();
+</script>
+</body>
+</html>
