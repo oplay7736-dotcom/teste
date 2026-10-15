@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#1ec959" />
+<title>Análise em andamento — não feche esta página</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --green:#1ec959;
+    --green-2:#16a34a;
+    --green-soft:#e6f9ee;
+    --green-border:#bbf0cf;
+    --text:#0f172a;
+    --muted:#64748b;
+    --bg:#f4f6fa;
+    --card:#ffffff;
+    --border:#e6ebf2;
+    --alert-bar:#22a06b;
+    --pink:#fce7f3;
+    --yellow:#fef3c7;
+    --purple:#ede9fe;
+    --teal:#ccfbf1;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;}
+  body{min-height:100vh;padding:18px 16px 60px;}
+
+  .top-alert{
+    max-width:480px;margin:0 auto 14px;
+    background:var(--alert-bar);
+    color:#fff;font-weight:700;font-size:13.5px;
+    border-radius:10px;
+    padding:10px 14px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    box-shadow:0 4px 12px -4px rgba(34,160,107,.45);
+  }
+
+  .page{max-width:480px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:14px;}
+
+  .watch-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--green);color:#fff;
+    border:none;border-radius:99px;
+    padding:10px 22px;font-weight:800;font-size:13px;letter-spacing:.5px;
+    text-transform:uppercase;cursor:pointer;
+    box-shadow:0 6px 16px -4px rgba(30,201,89,.5);
+    font-family:inherit;
+  }
+  .watch-btn svg{flex-shrink:0;}
+
+  .watch-text{
+    text-align:center;color:var(--text);font-size:14px;line-height:1.45;
+    max-width:380px;margin:2px 0 6px;
+  }
+
+  .video-wrap{
+    position:relative;width:100%;border-radius:14px;overflow:hidden;
+    background:#000;aspect-ratio:16/9;max-width:520px;
+    box-shadow:0 8px 28px -10px rgba(15,23,42,.35);
+  }
+  .video-wrap video{width:100%;height:100%;display:block;object-fit:cover;background:#000;}
+  .video-overlay{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    pointer-events:none;
+  }
+  .play-btn{
+    pointer-events:auto;
+    width:64px;height:64px;border-radius:50%;
+    background:rgba(30,201,89,.92);
+    border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 24px -4px rgba(0,0,0,.4);
+    transition:transform .15s;
+  }
+  .play-btn:hover{transform:scale(1.05);}
+  .play-btn svg{margin-left:3px;}
+  .sound-hint{
+    margin-top:8px;color:var(--muted);font-size:12.5px;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+  }
+
+  /* ==== Reveal CTA: hidden until 7 minutes ==== */
+  .reveal-cta{
+    width:100%;display:none;
+    background:linear-gradient(90deg,#0e7a37,#16a34a);
+    color:#fff;border:none;border-radius:14px;padding:18px 20px;
+    font-weight:800;font-size:15px;letter-spacing:.4px;cursor:pointer;
+    align-items:center;justify-content:center;gap:10px;
+    box-shadow:0 10px 24px -6px rgba(22,163,74,.55);
+    text-transform:uppercase;
+    animation:pop .35s ease;
+    font-family:inherit;line-height:1.3;
+  }
+  .reveal-cta.is-on{display:flex;}
+  .reveal-cta:hover{filter:brightness(1.05);}
+  @keyframes pop{from{transform:translateY(-6px) scale(.98);opacity:0;}to{transform:none;opacity:1;}}
+
+  /* ==== Sound popup ==== */
+  .sound-popup{
+    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+    background:rgba(15,23,42,.95);color:#fff;
+    padding:18px 22px;border-radius:14px;
+    font-size:14px;font-weight:600;text-align:center;
+    display:flex;align-items:center;gap:10px;cursor:pointer;
+    z-index:200;max-width:300px;width:calc(100% - 40px);
+    box-shadow:0 18px 40px -10px rgba(0,0,0,.4);
+    border:1px solid rgba(255,255,255,.08);
+    animation:popIn .3s ease;
+  }
+  .sound-popup.is-on{display:flex;}
+  .sound-popup.is-out{animation:popOut .25s ease forwards;}
+  .sound-popup .ic{
+    width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    animation:pulseRing 2s infinite;
+  }
+  @keyframes popIn{from{transform:translate(-50%,-50%) scale(.92);opacity:0;}to{transform:translate(-50%,-50%) scale(1);opacity:1;}}
+  @keyframes popOut{from{transform:translate(-50%,-50%) scale(1);opacity:1;}to{transform:translate(-50%,-50%) scale(.94);opacity:0;}}
+  @keyframes pulseRing{
+    0%{box-shadow:0 0 0 0 rgba(30,201,89,.6);}
+    70%{box-shadow:0 0 0 12px rgba(30,201,89,0);}
+    100%{box-shadow:0 0 0 0 rgba(30,201,89,0);}
+  }
+  .sound-popup .txt{display:flex;flex-direction:column;align-items:flex-start;line-height:1.3;}
+  .sound-popup .txt small{font-size:11.5px;font-weight:500;color:#94a3b8;margin-top:2px;}
+
+  /* ==== Investigation card ==== */
+  .inv-card{
+    width:100%;background:var(--card);border:1px solid var(--border);
+    border-radius:14px;padding:16px 16px 18px;
+    box-shadow:0 4px 18px -8px rgba(15,23,42,.08);
+    transition:border-color .25s, background .25s, box-shadow .25s;
+  }
+  .inv-card.done{
+    border-color:var(--green-border);
+    background:linear-gradient(180deg, #f7fdf9, #ffffff);
+    box-shadow:0 4px 18px -10px rgba(30,201,89,.45);
+  }
+  .inv-head{
+    display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+  }
+  .inv-avatar{
+    width:46px;height:46px;border-radius:50%;
+    background:linear-gradient(135deg,#128C7E,#075E54);
+    display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;
+  }
+  .inv-avatar svg{width:24px;height:24px;}
+  .inv-meta{min-width:0;}
+  .inv-num{font-weight:800;font-size:15.5px;}
+  .inv-tag{display:inline-flex;align-items:center;gap:6px;margin-top:3px;font-size:11.5px;color:var(--green-2);font-weight:600;}
+  .inv-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+  .inv-pct{text-align:right;}
+  .inv-pct .num{font-size:24px;font-weight:800;color:var(--green);line-height:1;}
+  .inv-pct .num.ready{color:var(--green);}
+  .inv-pct .lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+  .inv-bar{
+    margin-top:14px;height:6px;background:#eef2f7;border-radius:99px;overflow:hidden;
+  }
+  .inv-bar > span{display:block;height:100%;width:0;background:var(--green);border-radius:99px;transition:width .35s ease;}
+  .inv-state{
+    margin-top:14px;text-align:center;
+    color:var(--text);font-weight:700;font-size:13.5px;
+    display:none;
+  }
+  .inv-state.is-on{display:block;}
+  .inv-state .ic{color:var(--green);display:inline-flex;vertical-align:middle;margin-right:6px;}
+  .inv-hint{
+    margin-top:4px;text-align:center;color:var(--muted);font-size:12.5px;
+  }
+
+  /* ==== Feature cards: tighter, all start empty ==== */
+  .feat-stack{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .feat-card{
+    width:100%;background:var(--card);border:1px solid var(--border);
+    border-radius:14px;padding:12px;
+    display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+    transition:border-color .25s, background .25s, box-shadow .25s;
+  }
+  .feat-card.done{
+    border-color:var(--green-border);
+    background:linear-gradient(180deg, #f7fdf9, #ffffff);
+    box-shadow:0 4px 18px -10px rgba(30,201,89,.45);
+  }
+  .feat-icon{
+    width:42px;height:42px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .feat-icon.green{background:var(--green-soft);color:var(--green-2);}
+  .feat-icon.pink{background:var(--pink);color:#db2777;}
+  .feat-icon.yellow{background:var(--yellow);color:#d97706;}
+  .feat-icon.purple{background:var(--purple);color:#7c3aed;}
+  .feat-icon.teal{background:var(--teal);color:#0d9488;}
+  .feat-meta{min-width:0;}
+  .feat-title{font-weight:700;font-size:14px;}
+  .feat-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+  .feat-state{
+    width:24px;height:24px;border-radius:50%;
+    border:2px solid #cbd5e1;
+    position:relative;flex-shrink:0;
+    transition:border-color .25s, background .25s;
+  }
+  .feat-card.done .feat-state{border-color:var(--green);background:var(--green);}
+  .feat-card.done .feat-state::after{
+    content:'';position:absolute;left:6px;top:3px;width:6px;height:11px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);
+  }
+  .feat-card:not(.done) .feat-state::before{
+    content:'';position:absolute;left:4px;top:50%;
+    width:6px;height:6px;border-radius:50%;
+    background:#cbd5e1;transform:translateY(-50%);
+    animation:pulse 1.2s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+  .privacy{
+    width:100%;background:var(--card);border:1px solid var(--border);
+    border-radius:14px;padding:16px;text-align:center;
+  }
+  .privacy .ic{
+    width:42px;height:42px;border-radius:50%;
+    background:var(--yellow);color:#92400e;
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 8px;
+  }
+  .privacy h4{margin:0 0 4px;font-size:13.5px;font-weight:800;color:var(--green-2);}
+  .privacy p{margin:0;color:var(--muted);font-size:12px;}
+
+  @media (max-width:420px){
+    body{padding:14px 12px 50px;}
+    .top-alert{font-size:12.5px;padding:9px 12px;}
+    .inv-num{font-size:14.5px;}
+    .inv-pct .num{font-size:22px;}
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+
+    <div class="top-alert">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Análise em andamento — não feche esta página</span>
+    </div>
+
+    <button class="watch-btn" id="watchBtn" type="button">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+      Assista agora
+    </button>
+
+    <p class="watch-text">Assista a este vídeo enquanto finalizamos a investigação do número que você nos enviou.</p>
+
+    <div class="video-wrap" id="videoWrap">
+      <video id="vsl" playsinline preload="metadata" poster="assets/vsl-poster.jpg">
+        <source src="assets/WPP.mp4" type="video/mp4" />
+      </video>
+      <div class="video-overlay" id="overlay">
+        <button class="play-btn" id="playBtn" aria-label="Tocar vídeo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="sound-hint" id="soundHint">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      <span>Ative o som para não perder nada</span>
+    </div>
+
+    <!-- Sound popup: clicks anywhere to enable sound, then closes -->
+    <div class="sound-popup" id="soundPopup" role="button" tabindex="0" aria-label="Clique para ativar o som">
+      <div class="ic">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      </div>
+      <div class="txt">
+        <span>Clique e ative o som</span>
+        <small>Toque aqui para liberar o áudio</small>
+      </div>
+    </div>
+
+    <!-- Reveal CTA appears ONLY after 7 minutes -->
+    <button class="reveal-cta" id="reveal" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Clique para ver o que encontramos
+    </button>
+
+    <!-- Investigation card (avatar + phone + progress) -->
+    <div class="inv-card" id="invCard">
+      <div class="inv-head">
+        <div class="inv-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="inv-meta">
+          <div class="inv-num" id="invNum">+55 —</div>
+          <div class="inv-tag"><span class="dot"></span> <span id="invTag">Sendo analisado agora</span></div>
+        </div>
+        <div class="inv-pct">
+          <div class="num" id="pctNum">21%</div>
+          <div class="lbl" id="pctLbl">Analisando</div>
+        </div>
+      </div>
+      <div class="inv-bar"><span id="pctBar"></span></div>
+      <div class="inv-state" id="invState">
+        <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+        Investigação completa.
+      </div>
+      <div class="inv-hint" id="invHint">Clique no botão acima para descobrir a verdade.</div>
+    </div>
+
+    <div class="feat-stack" id="featStack">
+      <div class="feat-card">
+        <div class="feat-icon green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="feat-meta"><div class="feat-title">Mensagens apagadas</div><div class="feat-sub">Conversas excluídas</div></div>
+        <div class="feat-state"></div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon pink"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+        <div class="feat-meta"><div class="feat-title">Fotos e vídeos privados</div><div class="feat-sub">Imagens em conversas privadas</div></div>
+        <div class="feat-state"></div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon yellow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="feat-meta"><div class="feat-title">Última conexão real</div><div class="feat-sub">Horário exato mesmo que oculto</div></div>
+        <div class="feat-state"></div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="feat-meta"><div class="feat-title">Contatos e grupos ocultos</div><div class="feat-sub">Pessoas e grupos em segredo</div></div>
+        <div class="feat-state"></div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon teal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="feat-meta"><div class="feat-title">Localização em tempo real</div><div class="feat-sub">Localização compartilhada detectada</div></div>
+        <div class="feat-state"></div>
+      </div>
+    </div>
+
+    <div class="privacy">
+      <div class="ic">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
+      </div>
+      <h4>Esta ferramenta é 100% anônima</h4>
+      <p>Não responda mensagens para se manter discreto.</p>
+    </div>
+
+  </div>
+
+<script>
+(function(){
+  const phone = (function(){ try{ return localStorage.getItem('wt_phone') || ''; }catch(_){ return ''; } })();
+
+  function formatFull(d){
+    if(!d) return '+55 —';
+    const v = d.replace(/\D/g,'').slice(0,11);
+    if(v.length === 0) return '+55 —';
+    if(v.length <= 2) return '+55 ' + v;
+    if(v.length <= 7) return `+55 ${v.slice(0,2)} ${v.slice(2)}`;
+    return `+55 ${v.slice(0,2)} ${v.slice(2,7)}-${v.slice(7,11)}`;
+  }
+  const phoneFull = formatFull(phone);
+  document.getElementById('invNum').textContent = phoneFull;
+  document.title = `Análise ${phoneFull.replace('+55 ','')} — não feche esta página`;
+
+  const video = document.getElementById('vsl');
+  const overlay = document.getElementById('overlay');
+  const playBtn = document.getElementById('playBtn');
+  const watchBtn = document.getElementById('watchBtn');
+  const reveal = document.getElementById('reveal');
+  const invCard = document.getElementById('invCard');
+  const pctNum = document.getElementById('pctNum');
+  const pctBar = document.getElementById('pctBar');
+  const pctLbl = document.getElementById('pctLbl');
+  const invTag = document.getElementById('invTag');
+  const invState = document.getElementById('invState');
+  const invHint = document.getElementById('invHint');
+  const soundPopup = document.getElementById('soundPopup');
+  const featCards = Array.from(document.querySelectorAll('.feat-card'));
+
+  // ==== Reveal ONLY after 7 minutes of video playback ====
+  const REVEAL_AT_SECONDS = 7 * 60; // 420s
+  let revealed = false;
+
+  function revealAll(){
+    if(revealed) return;
+    revealed = true;
+    featCards.forEach((c)=> c.classList.add('done'));
+    pctNum.textContent = '100%';
+    pctBar.style.width = '100%';
+    pctLbl.textContent = 'Pronto!';
+    invTag.textContent = 'Análise concluída';
+    invState.classList.add('is-on');
+    invHint.textContent = 'Clique no botão acima para descobrir a verdade.';
+    invCard.classList.add('done');
+    reveal.classList.add('is-on');
+    reveal.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  // Progressive card completion thresholds (20/40/60/80/100 of 7-min window)
+  const cardThresholds = [20, 40, 60, 80, 100];
+  let lastReportedPct = -1;
+  const revealedCards = new Set();
+
+  function checkCards(pct){
+    cardThresholds.forEach((threshold, idx)=>{
+      if(pct >= threshold && !revealedCards.has(idx)){
+        revealedCards.add(idx);
+        if(featCards[idx]) featCards[idx].classList.add('done');
+      }
+    });
+  }
+
+  // Progress based on actual watched time
+  function updateProgress(){
+    if(revealed) return;
+    if(video.paused) return;
+    const watched = video.currentTime;
+    const pct = Math.min(100, (watched / REVEAL_AT_SECONDS) * 100);
+    const shown = Math.floor(pct);
+    if(shown !== lastReportedPct){
+      pctNum.textContent = shown + '%';
+      pctBar.style.width = pct + '%';
+      lastReportedPct = shown;
+    }
+    checkCards(pct);
+    if(watched >= REVEAL_AT_SECONDS){
+      revealAll();
+    }
+  }
+
+  video.addEventListener('timeupdate', updateProgress);
+  video.addEventListener('ended', ()=>{
+    if(!revealed) revealAll();
+  });
+
+  function startAutoplay(){
+    const p = video.play();
+    if(p && p.then){
+      p.then(()=>{ overlay.style.display='none'; }).catch(()=>{ /* keep overlay */ });
+    }
+  }
+  playBtn.addEventListener('click', ()=>{
+    overlay.style.display = 'none';
+    video.play().catch(()=>{});
+  });
+  watchBtn.addEventListener('click', ()=>{
+    overlay.style.display = 'none';
+    video.scrollIntoView({behavior:'smooth', block:'start'});
+    video.play().catch(()=>{});
+  });
+
+  // ==== Sound popup ====
+  // Appears shortly after page load; clicking it unmutes the video and closes itself permanently
+  let soundPopupClosed = false;
+  function showSoundPopup(){
+    if(!soundPopup || soundPopupClosed) return;
+    soundPopup.classList.add('is-on');
+    soundPopup.classList.remove('is-out');
+  }
+  function hideSoundPopup(){
+    if(!soundPopup) return;
+    if(soundPopupClosed) return;
+    soundPopupClosed = true;
+    soundPopup.classList.remove('is-on');
+    soundPopup.classList.add('is-out');
+    // Permanently hide after fade animation
+    setTimeout(()=>{
+      if(soundPopup){
+        soundPopup.style.display = 'none';
+        soundPopup.classList.remove('is-out');
+      }
+    }, 260);
+  }
+  function enableSound(){
+    video.muted = false;
+    video.volume = 1;
+    if(video.paused){
+      const p = video.play();
+      if(p && p.catch) p.catch(()=>{});
+    } else {
+      video.play().catch(()=>{});
+    }
+  }
+
+  function onSoundPopupClick(e){
+    e.preventDefault();
+    e.stopPropagation();
+    enableSound();
+    hideSoundPopup();
+  }
+  soundPopup.addEventListener('click', onSoundPopupClick);
+  soundPopup.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      onSoundPopupClick(e);
+    }
+  });
+  // Prevent the popup click from bubbling up and triggering other handlers
+  soundPopup.addEventListener('mousedown', (e)=> e.stopPropagation());
+  soundPopup.addEventListener('mouseup', (e)=> e.stopPropagation());
+  soundPopup.addEventListener('touchstart', (e)=> e.stopPropagation());
+  soundPopup.addEventListener('touchend', (e)=> e.stopPropagation());
+
+  reveal.addEventListener('click', ()=>{
+    try{ localStorage.setItem('wt_revealed','1'); }catch(_){}
+    window.location.href = 'resultado.html';
+  });
+
+  // Auto-play muted on load, then show sound popup after a short delay
+  video.muted = true;
+  video.addEventListener('loadedmetadata', ()=>{ startAutoplay(); });
+  window.addEventListener('load', ()=>{
+    setTimeout(startAutoplay, 250);
+    setTimeout(showSoundPopup, 800);
+  });
+
+  // Failsafe
+  setTimeout(()=>{ if(!revealed) revealAll(); }, REVEAL_AT_SECONDS * 1000);
+
+  // Block back nav
+  history.pushState(null,'','loading.html');
+  window.addEventListener('popstate', ()=>{ history.pushState(null,'','loading.html'); });
+
+})();
+</script>
+</body>
+</html>
