@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#1ec959" />
+<title>Espionar WhatsApp — Acesso Restrito</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --green:#1ec959;
+    --green-2:#16a34a;
+    --green-soft:#d1fae5;
+    --text:#0f172a;
+    --muted:#64748b;
+    --bg:#eef2f7;
+    --card:#ffffff;
+    --border:#e2e8f0;
+    --lock:#0b3b66;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);background:var(--bg);}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;}
+
+  .wrap{width:100%;max-width:520px;}
+  .card{
+    background:var(--card);
+    border-radius:18px;
+    padding:34px 30px 30px;
+    box-shadow:0 10px 40px -10px rgba(15,23,42,.15),0 2px 6px rgba(15,23,42,.04);
+  }
+  h1{
+    margin:0 0 12px;
+    font-size:26px;
+    line-height:1.25;
+    font-weight:800;
+    text-align:center;
+    color:var(--text);
+  }
+  h1 .accent{color:var(--green);}
+  .subtitle{
+    margin:0 0 26px;
+    text-align:center;
+    color:var(--muted);
+    font-size:14.5px;
+    line-height:1.55;
+  }
+  .label{
+    display:flex;align-items:center;gap:8px;
+    font-size:11.5px;font-weight:700;letter-spacing:.6px;
+    color:var(--text);text-transform:uppercase;
+    margin:0 0 8px;
+  }
+  .label .lock{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:18px;height:18px;border-radius:4px;
+    background:var(--lock);color:#fff;font-size:11px;
+  }
+  .input-row{display:flex;gap:8px;align-items:stretch;}
+  .dial{
+    width:78px;flex-shrink:0;
+    background:#f1f5f9;border:1px solid var(--border);border-radius:10px;
+    text-align:center;font-weight:700;font-size:16px;color:#334155;
+    display:flex;align-items:center;justify-content:center;height:54px;
+  }
+  .phone{
+    flex:1;height:54px;
+    background:#fff;border:1px solid var(--border);border-radius:10px;
+    padding:0 16px;font-size:16px;color:var(--text);outline:none;
+    font-weight:500;transition:border-color .15s, box-shadow .15s;
+    font-family:inherit;
+  }
+  .phone::placeholder{color:#94a3b8;font-weight:400;}
+  .phone:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(30,201,89,.18);}
+  .submit{
+    margin-top:18px;width:100%;height:54px;
+    border:none;border-radius:10px;
+    background:var(--green);color:#fff;
+    font-weight:800;font-size:15.5px;letter-spacing:.4px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:transform .08s, background .15s;
+    text-transform:uppercase;
+    box-shadow:0 6px 14px -4px rgba(30,201,89,.55);
+    font-family:inherit;
+  }
+  .submit:hover{background:#1ab84d;}
+  .submit:active{transform:translateY(1px);}
+  .submit svg{flex-shrink:0;}
+
+  /* Status message + progress bar BELOW the button */
+  .status-line{
+    margin-top:18px;
+    display:none;
+    flex-direction:column;align-items:center;gap:10px;
+    text-align:center;
+  }
+  .status-line.is-on{display:flex;}
+  .status-line .lbl{
+    color:var(--text);font-size:14px;font-weight:600;
+    display:flex;align-items:center;gap:8px;
+  }
+  .status-line .lbl .dots{
+    display:inline-flex;gap:3px;
+  }
+  .status-line .lbl .dots span{
+    width:4px;height:4px;border-radius:50%;background:var(--green);
+    animation:dotPulse 1.4s infinite;
+  }
+  .status-line .lbl .dots span:nth-child(2){animation-delay:.2s;}
+  .status-line .lbl .dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes dotPulse{0%,80%,100%{opacity:.3;}40%{opacity:1;}}
+
+  .status-line .bar{
+    width:100%;height:5px;background:#e2e8f0;border-radius:99px;overflow:hidden;
+  }
+  .status-line .bar > span{
+    display:block;height:100%;width:0;
+    background:linear-gradient(90deg,var(--green),var(--green-2));
+    border-radius:99px;transition:width .35s ease;
+  }
+
+  .trust{
+    margin-top:18px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    color:var(--muted);font-size:12.5px;
+  }
+  .err{
+    margin-top:10px;color:#dc2626;font-size:13px;
+    min-height:18px;text-align:center;
+  }
+  @media (max-width:420px){
+    .card{padding:26px 20px 22px;border-radius:16px;}
+    h1{font-size:22px;}
+    .subtitle{font-size:13.5px;}
+    .dial{width:64px;}
+    .submit{font-size:14.5px;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>O que seu parceiro faz no <span class="accent">WhatsApp?</span></h1>
+      <p class="subtitle">Insira o número que deseja espionar. Descubra mensagens, fotos e localização em tempo real.</p>
+
+      <div class="label"><span class="lock" aria-hidden="true">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
+      </span> Número do WhatsApp</div>
+
+      <form id="form" novalidate>
+        <div class="input-row">
+          <div class="dial">+55</div>
+          <input id="phone" class="phone" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="11 99999-8765" maxlength="13" />
+        </div>
+        <div class="err" id="err"></div>
+        <button class="submit" id="btn" type="submit">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          Espionar Agora
+        </button>
+      </form>
+
+      <!-- Status line appears ONE AT A TIME below the button -->
+      <div class="status-line" id="statusLine">
+        <div class="lbl" id="statusLbl">
+          <span class="dots"><span></span><span></span><span></span></span>
+          <span id="statusText">Buscando número...</span>
+        </div>
+        <div class="bar"><span id="statusBar"></span></div>
+      </div>
+
+      <div class="trust">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
+        <span>100% anônimo · Sem rastros · Criptografado</span>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  const input = document.getElementById('phone');
+  const err = document.getElementById('err');
+  const form = document.getElementById('form');
+  const btn = document.getElementById('btn');
+  const statusLine = document.getElementById('statusLine');
+  const statusText = document.getElementById('statusText');
+  const statusBar = document.getElementById('statusBar');
+
+  function mask(v){
+    v = v.replace(/\D/g,'').slice(0,11);
+    if(v.length === 0) return '';
+    if(v.length < 3) return v;
+    if(v.length <= 6) return v.replace(/^(\d{2})(\d+)/,'$1 $2');
+    if(v.length <= 10) return v.replace(/^(\d{2})(\d{4})(\d+)/,'$1 $2-$3');
+    return v.replace(/^(\d{2})(\d{5})(\d{4}).*/,'$1 $2-$3');
+  }
+  input.addEventListener('input', ()=>{ input.value = mask(input.value); err.textContent=''; });
+
+  function digits(){ return input.value.replace(/\D/g,''); }
+  function valid(){ return digits().length >= 10; }
+
+  form.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    if(!valid()){
+      err.textContent = 'Digite um número válido com DDD.';
+      input.focus();
+      return;
+    }
+    err.textContent='';
+    btn.disabled = true;
+    btn.style.opacity = '.85';
+    statusLine.classList.add('is-on');
+
+    try{ localStorage.setItem('wt_phone', digits()); }catch(_){}
+
+    // Show ONE status at a time, fast → slow
+    const steps = [
+      { text:'Buscando número...',     dur: 600,  pct: 18 },
+      { text:'Verificando WhatsApp...', dur: 800,  pct: 45 },
+      { text:'Número encontrado!',      dur: 700,  pct: 72 },
+      { text:'Iniciando análise...',    dur: 1400, pct: 100}
+    ];
+    let acc = 0;
+    steps.forEach((s,i)=>{
+      setTimeout(()=>{
+        statusText.textContent = s.text;
+        statusBar.style.width = s.pct + '%';
+      }, acc);
+      acc += s.dur;
+    });
+    setTimeout(()=>{ window.location.href='loading.html'; }, acc + 200);
+  });
+
+  // No pre-fill: user must type the number fresh each time
+})();
+</script>
+</body>
+</html>
